@@ -1,5 +1,5 @@
 // server.js
-// where your node app starts
+// where your node app strts
 
 // init project
 var express = require('express');
@@ -60,7 +60,6 @@ app.get("/api/timestamp/:date", function (req, res) {
 
     unix: unixDate,
     utc: utcDate,
-
 
     //Entry: req.params.date,
     //Entry_to_number: entryToNumber,
