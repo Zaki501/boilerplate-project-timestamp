@@ -40,7 +40,7 @@ app.get("/api/timestamp/:date?", function (req, res) {
   }
   const isDate = function () {
 
-    return (new Date(entryToNumber) !== "Invalid Date");
+    return (new Date(entry) !== "Invalid Date");
   }
 
 
@@ -71,7 +71,7 @@ app.get("/api/timestamp/:date?", function (req, res) {
           utcDate = new Date(entryToNumber).toUTCString();
 
         } else {
-          errorEntry = "None of the above";
+          errorEntry = "Invalid Date";
         }
 
   res.setHeader("Access-Control-Allow-Origin", "*");
