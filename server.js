@@ -25,44 +25,62 @@ app.get("/", function (req, res) {
 app.get("/api/hello", function (req, res) {
   res.json({ greeting: 'hello API' });
 });
-
-app.get("/api/timestamp/:date", function (req, res) {
+// check if new date = invalid date, if entry is blank return current time,   
+app.get("/api/timestamp/:date?", function (req, res) {
 
   const entry = req.params.date;
   const entryToNumber = parseInt(req.params.date);
 
   let utcDate;
   let unixDate;
+  let errorEntry;
 
-  if (entry.includes("-") === true) {
+  const isEmpty = function () {
+    return (!req.params.date);
+  }
+  const isDate = function () {
 
-    const entrySplitByHyphen = req.params.date.split("-");
+    return (new Date(entryToNumber) !== "Invalid Date") && !isNaN(new Date(entryToNumber));
+  }
 
-    const year = parseInt(entrySplitByHyphen[0]);
-    const month = parseInt(entrySplitByHyphen[1]) - 1;
-    const day = parseInt(entrySplitByHyphen[2]);
 
-    utcDate = new Date(year, month, day).toUTCString();
-    unixDate = new Date(req.params.date).getTime()
+  if (isEmpty()) {
+    // 
+    //
+    unixDate = Date.now();
+    utcDate = new Date().toUTCString();
+
   } else
-    if (entry.length === 13) {
+    if (!isDate()) {
+      errorEntry = "Invalid Date";
+    } else
+      if (entry.includes("-") === true) {
 
-      unixDate = entryToNumber;
-      utcDate = new Date(entryToNumber).toUTCString();
+        const entrySplitByHyphen = req.params.date.split("-");
 
-    } else {
-      return res.json({
-        error: "Invalid Date"
-      })
-    }
+        const year = parseInt(entrySplitByHyphen[0]);
+        const month = parseInt(entrySplitByHyphen[1]) - 1;
+        const day = parseInt(entrySplitByHyphen[2]);
 
+        utcDate = new Date(year, month, day).toUTCString();
+        unixDate = new Date(req.params.date).getTime()
+      } else
+        if (entry.length === 13) {
+
+          unixDate = entryToNumber;
+          utcDate = new Date(entryToNumber).toUTCString();
+
+        } else {
+          errorEntry = "None of the above";
+        }
+
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.json({
 
     unix: unixDate,
     utc: utcDate,
+    error: errorEntry
 
-    //Entry: req.params.date,
-    //Entry_to_number: entryToNumber,
 
   })
 })
@@ -71,3 +89,4 @@ app.get("/api/timestamp/:date", function (req, res) {
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
+
