@@ -40,7 +40,7 @@ app.get("/api/timestamp/:date?", function (req, res) {
   }
   const isDate = function () {
 
-    return (new Date(entryToNumber) !== "Invalid Date") && !isNaN(new Date(entryToNumber));
+    return (new Date(entryToNumber) !== "Invalid Date");
   }
 
 
