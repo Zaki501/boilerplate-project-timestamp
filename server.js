@@ -35,23 +35,31 @@ app.get("/api/timestamp/:date?", function (req, res) {
   let unixDate;
   let errorEntry;
 
-  const isEmpty = function () {
-    return (!req.params.date);
+  const dateParseCheck = function () {
+
+    let dateToNumber = parseInt(entry);
+
+    let dateVariable = new Date(entry);
+    let dateNumberVariable = new Date(dateToNumber);
+
+    console.log(dateVariable, dateNumberVariable)
+
+    return ((dateVariable == 'Invalid Date') && (dateNumberVariable == 'Invalid Date'))
+
   }
+
   const isDate = function () {
 
     return (new Date(entryToNumber) !== "Invalid Date") && !isNaN(new Date(entryToNumber));
   }
 
+  if (!req.params.date) {
 
-  if (isEmpty()) {
-    // 
-    //
     unixDate = Date.now();
     utcDate = new Date().toUTCString();
 
   } else
-    if (!isDate()) {
+    if (dateParseCheck()) {
       errorEntry = "Invalid Date";
     } else
       if (entry.includes("-") === true) {
