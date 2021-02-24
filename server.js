@@ -52,6 +52,10 @@ app.get("/api/timestamp/:date?", function (req, res) {
 
     return (new Date(entryToNumber) !== "Invalid Date") && !isNaN(new Date(entryToNumber));
   }
+  const dateCheck = () => {
+    return ((!isNaN(new Date(entry).getTime())) && (new Date(entryToNumber) !== "Invalid Date"))
+  }
+
 
   if (!req.params.date) {
 
@@ -59,25 +63,25 @@ app.get("/api/timestamp/:date?", function (req, res) {
     utcDate = new Date().toUTCString();
 
   } else
-    if (dateParseCheck()) {
-      errorEntry = "Invalid Date";
+    if (entry.includes("-") === true) {
+
+      const entrySplitByHyphen = req.params.date.split("-");
+
+      const year = parseInt(entrySplitByHyphen[0]);
+      const month = parseInt(entrySplitByHyphen[1]) - 1;
+      const day = parseInt(entrySplitByHyphen[2]);
+
+      utcDate = new Date(year, month, day).toUTCString();
+      unixDate = new Date(req.params.date).getTime()
     } else
-      if (entry.includes("-") === true) {
+      if (entry.length === 13) {
 
-        const entrySplitByHyphen = req.params.date.split("-");
+        unixDate = entryToNumber;
+        utcDate = new Date(entryToNumber).toUTCString();
 
-        const year = parseInt(entrySplitByHyphen[0]);
-        const month = parseInt(entrySplitByHyphen[1]) - 1;
-        const day = parseInt(entrySplitByHyphen[2]);
-
-        utcDate = new Date(year, month, day).toUTCString();
-        unixDate = new Date(req.params.date).getTime()
       } else
-        if (entry.length === 13) {
-
-          unixDate = entryToNumber;
-          utcDate = new Date(entryToNumber).toUTCString();
-
+        if (!dateCheck()) {
+          errorEntry = "Invalid Date";
         } else {
           errorEntry = "None of the above";
         }
