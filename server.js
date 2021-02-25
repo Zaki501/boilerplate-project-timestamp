@@ -25,76 +25,39 @@ app.get("/", function (req, res) {
 app.get("/api/hello", function (req, res) {
   res.json({ greeting: 'hello API' });
 });
-// check if new date = invalid date, if entry is blank return current time,   
-app.get("/api/timestamp/:date?", function (req, res) {
 
-  const entry = req.params.date;
-  const entryToNumber = parseInt(req.params.date);
+app.get("/api/timestamp/:input?", function (req, res) {
 
-  let utcDate;
-  let unixDate;
-  let errorEntry;
+  const entry = req.params.input;
+  const entryToNumber = Number(entry);
 
-  const dateParseCheck = function () {
-
-    let dateToNumber = parseInt(entry);
-
-    let dateVariable = new Date(entry);
-    let dateNumberVariable = new Date(dateToNumber);
-
-    console.log(dateVariable, dateNumberVariable)
-
-    return ((dateVariable == 'Invalid Date') && (dateNumberVariable == 'Invalid Date'))
-
+  const isDate = () => {
+    return (!isNaN(new Date(entry).getTime()))
   }
 
-  const isDate = function () {
-
-    return (new Date(entryToNumber) !== "Invalid Date") && !isNaN(new Date(entryToNumber));
+  if (!req.params.input) {
+    res.json({
+      unix: Date.now(),
+      utc: new Date().toUTCString()
+    })
   }
-  const dateCheck = () => {
-    return ((!isNaN(new Date(entry).getTime())) && (new Date(entryToNumber) !== "Invalid Date"))
+  if (isDate()) {
+    res.json({
+      unix: new Date(entry).getTime(),
+      utc: new Date(entry).toUTCString()
+    })
+  }
+  if (new Date(entryToNumber) != "Invalid Date") {
+    res.json({
+      unix: entryToNumber,
+      utc: new Date(entryToNumber).toUTCString()
+    })
+  } else {
+    res.json({
+      error: "Invalid Date"
+    })
   }
 
-
-  if (!req.params.date) {
-
-    unixDate = Date.now();
-    utcDate = new Date().toUTCString();
-
-  } else
-    if (entry.includes("-") === true) {
-
-      const entrySplitByHyphen = req.params.date.split("-");
-
-      const year = parseInt(entrySplitByHyphen[0]);
-      const month = parseInt(entrySplitByHyphen[1]) - 1;
-      const day = parseInt(entrySplitByHyphen[2]);
-
-      utcDate = new Date(year, month, day).toUTCString();
-      unixDate = new Date(req.params.date).getTime()
-    } else
-      if (entry.length === 13) {
-
-        unixDate = entryToNumber;
-        utcDate = new Date(entryToNumber).toUTCString();
-
-      } else
-        if (!dateCheck()) {
-          errorEntry = "Invalid Date";
-        } else {
-          errorEntry = "None of the above";
-        }
-
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.json({
-
-    unix: unixDate,
-    utc: utcDate,
-    error: errorEntry
-
-
-  })
 })
 
 // listen for requests :)
